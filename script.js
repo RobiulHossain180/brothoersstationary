@@ -1,15 +1,17 @@
-// Add your Google Sheets URL here
 var publicSpreadsheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRC5CFRdn14slaGyvOfXi77KPrsCBwIRRftk0UOI-1MOZIW2p_2c1lngfYUgO8fmqeuLewjPDYrm4jT/pubhtml';
 
+// Initialize Tabletop.js and fetch data
 function init() {
     Tabletop.init({
         key: publicSpreadsheetUrl,
         callback: showInfo,
-        simpleSheet: true
+        simpleSheet: true,
+        debug: true // Set this to true to get console logs for debugging
     });
 }
 
-function showInfo(data) {
+function showInfo(data, tabletop) {
+    console.log(data);  // Log the fetched data to ensure it's being fetched
     var productList = document.getElementById('product-list');
     
     data.forEach(function(product) {
@@ -60,5 +62,5 @@ function showInfo(data) {
     });
 }
 
-// Start the script
+// Start the script when the DOM is fully loaded
 window.addEventListener('DOMContentLoaded', init);
