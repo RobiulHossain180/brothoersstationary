@@ -1,66 +1,75 @@
 var publicSpreadsheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRC5CFRdn14slaGyvOfXi77KPrsCBwIRRftk0UOI-1MOZIW2p_2c1lngfYUgO8fmqeuLewjPDYrm4jT/pubhtml';
 
-// Initialize Tabletop.js and fetch data
-function init() {
-    Tabletop.init({
-        key: publicSpreadsheetUrl,
-        callback: showInfo,
-        simpleSheet: true,
-        debug: true // Set this to true to get console logs for debugging
-    });
+// Load the Google Visualization API
+function loadSheet() {
+    var query = new google.visualization.Query(publicSpreadsheetUrl);
+    query.send(handleData);
 }
 
-function showInfo(data, tabletop) {
-    console.log(data);  // Log the fetched data to ensure it's being fetched
-    var productList = document.getElementById('product-list');
+// Callback function to handle the data
+function handleData(response) {
+    if (response.isError()) {
+        console.log('Error fetching data: ' + response.getMessage());
+        return;
+    }
     
-    data.forEach(function(product) {
-        // Create product card
+    var data = response.getDataTable();
+    var productList = document.getElementById('product-list');
+
+    for (var i = 0; i < data.getNumberOfRows(); i++) {
         var productCard = document.createElement('div');
         productCard.classList.add('product-item');
+        
+        // Get product details from the sheet
+        var imageUrl = data.getValue(i, 0);  // Assumes the Image URL is in the first column
+        var sku = data.getValue(i, 1);       // SKU in the second column
+        var productName = data.getValue(i, 2); // Product name in the third column
+        var price = data.getValue(i, 3);     // Price in the fourth column
+        var stock = data.getValue(i, 4);     // Stock in the fifth column
 
-        // Product image
+        // Product Image
         var img = document.createElement('img');
-        img.src = product['Image URL'];
+        img.src = imageUrl;
         productCard.appendChild(img);
 
         // SKU
-        var sku = document.createElement('p');
-        sku.classList.add('sku');
-        sku.innerText = 'SKU: ' + product.SKU;
-        productCard.appendChild(sku);
+        var skuElement = document.createElement('p');
+        skuElement.classList.add('sku');
+        skuElement.innerText = 'SKU: ' + sku;
+        productCard.appendChild(skuElement);
 
-        // Product name
-        var productName = document.createElement('h2');
-        productName.innerText = product['Product Name'];
-        productCard.appendChild(productName);
+        // Product Name
+        var productNameElement = document.createElement('h2');
+        productNameElement.innerText = productName;
+        productCard.appendChild(productNameElement);
 
-        // Product price
-        var price = document.createElement('p');
-        price.innerText = 'Price: $' + product.Price;
-        productCard.appendChild(price);
+        // Product Price
+        var priceElement = document.createElement('p');
+        priceElement.innerText = 'Price: $' + price;
+        productCard.appendChild(priceElement);
 
-        // Stock availability
+        // Stock Information
         var stockInfo = document.createElement('p');
-        stockInfo.innerText = product.Stock > 0 ? 'In Stock: ' + product.Stock : 'Out of Stock';
-        if (product.Stock <= 0) {
+        stockInfo.innerText = stock > 0 ? 'In Stock: ' + stock : 'Out of Stock';
+        if (stock <= 0) {
             stockInfo.classList.add('out-of-stock');
         }
         productCard.appendChild(stockInfo);
 
         // Buy button
-        if (product.Stock > 0) {
+        if (stock > 0) {
             var buyBtn = document.createElement('a');
             buyBtn.classList.add('buy-btn');
             buyBtn.innerText = 'Buy Now';
-            buyBtn.href = '#';  // You can replace with actual checkout links
+            buyBtn.href = '#';  // Replace with actual checkout links
             productCard.appendChild(buyBtn);
         }
 
         // Append the card to product list
         productList.appendChild(productCard);
-    });
+    }
 }
 
-// Start the script when the DOM is fully loaded
-window.addEventListener('DOMContentLoaded', init);
+// Load the Google Visualization library and set a callback
+google.charts.load('current', { packages: ['corechart', 'table'] });
+google.charts.setOnLoadCallback(loadSheet);
