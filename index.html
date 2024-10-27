@@ -1,23 +1,284 @@
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product List</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Stationary Shop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        #searchBar {
+            width: 100%;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #itemList {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .item {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            width: 220px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .item:hover {
+            transform: scale(1.05);
+        }
+
+        .item img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .item h3 {
+            font-size: 18px;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .item p {
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        .item a {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #25D366;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .item a:hover {
+            background-color: #128c7e;
+        }
+
+        #cart {
+            margin-top: 30px;
+            border-top: 2px solid #333;
+            padding-top: 20px;
+        }
+
+        #cart h2 {
+            text-align: center;
+        }
+
+        #cartList {
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        #totalPrice {
+            font-weight: bold;
+            font-size: 18px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        #placeOrder {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            width: 200px;
+        }
+
+        #placeOrder:hover {
+            background-color: #0056b3;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Product List</h1>
-        <div id="product-list">
-            <!-- Product items will be injected here by JavaScript -->
-        </div>
+<!-- Search Bar -->
+    <input type="text" id="searchBar" placeholder="Search for products...">
+
+    <div id="itemList"></div>
+
+    <!-- Cart Section -->
+    <div id="cart">
+        <h2>Cart</h2>
+        <div id="cartList"></div>
+        <div id="totalPrice">Total Price: ৳0</div>
+        <a href="#" id="placeOrder" onclick="placeOrder()">Place Order</a>
     </div>
 
-    <!-- Google Charts Library -->
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        const items = [
+            { id: "184760", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Envoy_Premium_Ballpen_Black_Ink_-Matador_Group-5b5ab-184760.jpg", title: "Matador Envoy Premium Ballpen Black Ink - (5 Pcs)", author: "Matador Group", price: 5 },
+            { id: "184761", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_i_teen_Gel_pen_Black_Ink_06_Pcs-Matador_Group-bc25b-184761.jpg", title: "Matador i-teen Gel Pen 6Pcs - Black Ink", author: "Matador Group", price: 5},
+            { id: "184764", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Ocean_Gel_Blue_Ink_05_Pcs-Matador_Group-c7735-184764.jpg", title: "Matador Ocean Gel Pen Blue Ink - 5 Pcs", author: "Matador Group", price: 5 },
+            { id: "184766", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Radiant_Premium_Ballpen_Black_In-Matador_Group-a87c1-184766.png", title: "Matador Radiant Premium Ball Pen 6Pcs - Black Ink", author: "Matador Group", price: 5},
+            { id: "202723", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_All_Time_Ball_Pen_6Pcs-Matador_Group-2e42e-202723.png", title: "Matador All-Time Ball Pen-6Pcs - Black Ink", author: "Matador Group", price: 5 },
+            { id: "202725", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Glory_Crystal_Ball_Pen_Black_Ink-Matador_Group-82613-202725.png", title: "Matador Glory Crystal Ball Pen 5Pcs - Black Ink", author: "Matador Group", price: 5 },
+            { id: "202726", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_i_Teen_Rio_Ball_Pen_Black_Ink_6_-Matador_Group-14932-202726.png", title: "Matador i-Teen Rio Ball Pen Black Ink - (6 Pcs)", author: "Matador Group", price: 5 },
+            { id: "202730", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Pin_Point_Ball_Pen_Black_Ink_12_-Matador_Group-f5d3a-202730.jpg", title: "Matador Pin-Point Ballpen Black Ink - (12 Pcs)", author: "Matador Group", price: 5 },
+            { id: "202731", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Hi_School_Ball_Pen_Black_Ink_12_-Matador_Group-ca2a2-202731.png", title: "Matador Hi-School Black (12 Pcs)-N1", author: "Matador Group", price: 5 },
+            { id: "202732", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Hi_School_Ball_Pen_Colors_5Pcs-Matador_Group-84614-202732.png", title: "Matador Hi-School Ball Pen Colors - 5Pcs", author: "Matador Group", price: 5 },
+            { id: "225349", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Orbit_Blank_Ink__12_Pcs-Matador_Group-875cb-225349.jpg", title: "Matador Orbit Ball Pen 12Pcs - Black Ink", author: "Matador Group", price: 5 },
+            { id: "242690", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_i_teen_Gel_pen_Blue_Black_Ink_06-Matador_Group-3f8ce-242690.png", title: "Matador i-teen Gel Pen 6Pcs - Blue Ink", author: "Matador Group", price: 5 },
+            { id: "290887", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_smoothy_premium_ballpen_Black_In-Matador_Group-8f1e5-290887.jpg", title: "Matador Smoothy Premium Ball Pen 6Pcs - Black Ink", author: "Matador Group", price:5 },
+            { id: "390900", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Claro_Ball_Pen_Black_Ink_6_Pcs-Matador_Group-55e92-390900.png", title: "Matador Claro Ball Pen 6Pcs - Black Ink", author: "Matador Group", price: 5 },
+            { id: "192648", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Glitter_Color_Gel_Pen_1_Pack_5_P-Matador_Group-01733-192648.png", title: "Matador Glitter Gel Pen Color Ink - 5 Pcs", author: "Matador Group", price: 10 },
+            { id: "242696", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Ocean_Gel_Pen_Black_Ink_5_Pcs-Matador_Group-1b409-242696.png", title: "Matador Ocean Gel Pen Black Ink - 5 Pcs", author: "Matador Group", price: 5 },
+            { id: "242691", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_i_teen_Gel_pen_Red_Black_Ink_06_-Matador_Group-661aa-242691.png", title: "Matador i-teen Gel Pen 6Pcs - Red Ink", author: "Matador Group", price: 5 },
+            { id: "242685", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Orbit_Blue_12_Pcs-Matador_Group-0fd7c-242685.jpg", title: "Matador Orbit Ball Pen Blue Ink - 12 Pcs", author: "Matador Group", price: 5 }        
+        ];
+        const cart = [];
+
+        // Function to display items
+        function displayItems(items) {
+            const itemList = document.getElementById('itemList');
+            itemList.innerHTML = '';
+
+            items.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item';
+
+                const img = document.createElement('img');
+                img.src = item.img;
+                img.alt = item.title;
+
+                const title = document.createElement('h3');
+                title.innerText = item.title;
+
+                const author = document.createElement('p');
+                author.innerText = item.author;
+
+                const price = document.createElement('p');
+                price.innerText = `Price: ৳${item.price}`;
+                price.style.fontWeight = "bold";
+                price.style.color = "#333";
+
+                const quantityInput = document.createElement('input');
+                quantityInput.type = 'number';
+                quantityInput.value = 1;
+                quantityInput.min = 1;
+                quantityInput.style.width = "50px";
+
+                const orderButton = document.createElement('a');
+                orderButton.href = '#';
+                orderButton.innerText = "Add to Cart";
+                orderButton.onclick = (event) => {
+                    event.preventDefault();
+                    addToCart(item, quantityInput.value);
+                };
+
+                itemDiv.appendChild(img);
+                itemDiv.appendChild(title);
+                itemDiv.appendChild(author);
+                itemDiv.appendChild(price);
+                itemDiv.appendChild(quantityInput);
+                itemDiv.appendChild(orderButton);
+                itemList.appendChild(itemDiv);
+            });
+        }
+
+        // Function to add item to cart
+        function addToCart(item, quantity) {
+            const cartItem = { ...item, quantity: parseInt(quantity) };
+            cart.push(cartItem);
+            displayCart();
+        }
+
+        // Function to display cart items
+        function displayCart() {
+            const cartList = document.getElementById('cartList');
+            cartList.innerHTML = '';
+
+            let totalPrice = 0;
+
+            cart.forEach((item, index) => {
+                const cartItemDiv = document.createElement('div');
+                cartItemDiv.className = 'cart-item';
+
+                cartItemDiv.innerHTML = `${item.title} (ID: ${item.id}) - Quantity: ${item.quantity} - Price: ৳${item.price * item.quantity} 
+                    <button class="delete-button" onclick="deleteFromCart(${index})">Delete</button>`;
+                
+                cartList.appendChild(cartItemDiv);
+                totalPrice += item.price * item.quantity;
+            });
+
+            document.getElementById('totalPrice').innerText = `Total Price: ৳${totalPrice}`;
+        }
+
+        // Function to delete item from cart
+        function deleteFromCart(index) {
+            cart.splice(index, 1);
+            displayCart();
+        }
+
+        function placeOrder() {
+    if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+
+    const productDetails = cart.map(item => `${item.id} (Qty: ${item.quantity})`).join(", ");
+    const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    const phoneNumber = "+8801531540211"; // Replace with your WhatsApp number
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=I want to buy these products: ${productDetails}. Total amount: ৳${totalAmount}. How much time need to deliver?`;
     
-    <!-- Custom JavaScript file -->
-    <script src="script.js"></script>
+    // Log the WhatsApp URL for debugging
+    console.log(whatsappUrl);
+    
+    // Redirecting to WhatsApp
+    window.location.href = whatsappUrl;
+}
+
+
+        // Initial display of items
+        displayItems(items);
+    </script>
 </body>
 </html>
