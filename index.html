@@ -136,9 +136,82 @@
         .delete-button:hover {
             background-color: #c82333;
         }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Container styling */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* Title styling */
+        .title {
+            font-family: 'Georgia', serif;
+            font-size: 2.5em;
+            color: #2f4f4f;
+            margin-bottom: 10px;
+        }
+
+        /* Note section styling */
+        .note-section {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        /* Paragraph styling within the note section */
+        .note-section p {
+            font-size: 1em;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        /* List styling within the note section */
+        .note-section ul {
+            list-style-type: decimal;
+            padding-left: 20px;
+        }
+
+        /* List item styling */
+        .note-section li {
+            margin-bottom: 10px;
+        }
+
+        /* WhatsApp link styling */
+        .whatsapp-link {
+            color: #25D366;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* WhatsApp link hover effect */
+        .whatsapp-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
+
+<div class="container">
+    <h1 class="title">Brothers Stationery</h1>
+    <div class="note-section">
+        <p><strong>Note:</strong></p>
+        <ul>
+            <li>We deliver our products on an order receipt basis. So, it takes time to deliver the product, sorry for that. After placing the order, you will get to know the possible delivery date. Thanks for supporting us.</li>
+            <li>If you want more items in this list or buy, then let's discuss in <a href="https://wa.me/+8801531540211" class="whatsapp-link" target="_blank">WhatsApp</a>.</li>
+        </ul>
+    </div>
+
 <!-- Search Bar -->
     <input type="text" id="searchBar" placeholder="Search for products...">
 
@@ -151,7 +224,7 @@
         <div id="totalPrice">Total Price: ৳0</div>
         <a href="#" id="placeOrder" onclick="placeOrder()">Place Order</a>
     </div>
-
+</div>
     <script>
         const items = [
             { id: "184760", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Envoy_Premium_Ballpen_Black_Ink_-Matador_Group-5b5ab-184760.jpg", title: "Matador Envoy Premium Ballpen Black Ink - (5 Pcs)", author: "Matador Group", price: 5 },
