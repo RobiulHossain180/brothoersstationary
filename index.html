@@ -336,23 +336,36 @@
         return;
     }
 
-    const productDetails = cart.map(item => `${item.id} (Qty: ${item.quantity})`).join(", ");
-    const totalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    // Hide the "Place Order" button and "Delete" buttons
+    const placeOrderButton = document.getElementById('placeOrder');
+    const deleteButtons = document.querySelectorAll('.delete-button');
+    
+    placeOrderButton.style.display = 'none'; // Hide Place Order button
+    deleteButtons.forEach(button => button.style.display = 'none'); // Hide Delete buttons
 
-    const fbUsername = "robiul.shagor.946"; // Replace with your Facebook page username
-    const messengerUrl = `https://m.me/${fbUsername}?ref=I want to buy these products: ${productDetails}. Total amount: ৳${totalAmount}. How much time need to deliver?`;
+    // Capture the screenshot
+    html2canvas(document.getElementById('cart')).then(canvas => {
+        // Show the hidden elements again after screenshot
+        placeOrderButton.style.display = 'block';
+        deleteButtons.forEach(button => button.style.display = 'block');
 
-    // Log the Messenger URL for debugging
-    console.log(messengerUrl);
+        // Convert the canvas to a data URL and open in a new tab or save it
+        const screenshotUrl = canvas.toDataURL("image/png");
 
-    // Redirecting to Messenger
-    window.location.href = messengerUrl;
+        // Create a download link for the image
+        const downloadLink = document.createElement('a');
+        downloadLink.href = screenshotUrl;
+        downloadLink.download = 'cart_screenshot.png'; // Filename for the screenshot
+        downloadLink.click();
+    }).catch(error => {
+        console.error("Error capturing screenshot:", error);
+    });
 }
-
-
 
         // Initial display of items
         displayItems(items);
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 </body>
 </html>
