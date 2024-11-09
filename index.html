@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brothers Stationery</title>
+    <title>Stationery Shop</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        body {
+           body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
@@ -159,7 +160,7 @@
 </head>
 <body>
 
-<h1>Brothers Stationery</h1>
+<h1>Stationery Shop</h1>
 
 <!-- Search Bar -->
 <input type="text" id="searchBar" placeholder="Search for products...">
@@ -175,7 +176,7 @@
 </div>
 
 <script>
-    const items = [
+   const items = [
             { id: "184760", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Envoy_Premium_Ballpen_Black_Ink_-Matador_Group-5b5ab-184760.jpg", title: "Matador Envoy Premium Ballpen Black Ink - (5 Pcs)", author: "Matador Group", mainPrice: 10, discountPrice: 7},
             { id: "184761", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_i_teen_Gel_pen_Black_Ink_06_Pcs-Matador_Group-bc25b-184761.jpg", title: "Matador i-teen Gel Pen 6Pcs - Black Ink", author: "Matador Group", mainPrice: 12, discountPrice: 8},
             { id: "184764", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Ocean_Gel_Blue_Ink_05_Pcs-Matador_Group-c7735-184764.jpg", title: "Matador Ocean Gel Pen Blue Ink - 5 Pcs", author: "Matador Group", mainPrice: 12, discountPrice: 8 },
@@ -275,15 +276,36 @@
 
     // Place order
     function placeOrder() {
-        if (cart.length === 0) {
-            alert("Your cart is empty!");
-        } else {
-            alert("Order placed successfully!");
-            cart.length = 0;
-            displayCart();
-        }
+    if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
     }
 
+    // Hide the "Place Order" button and "Delete" buttons
+    const placeOrderButton = document.getElementById('placeOrder');
+    const deleteButtons = document.querySelectorAll('.delete-button');
+    
+    placeOrderButton.style.display = 'none'; // Hide Place Order button
+    deleteButtons.forEach(button => button.style.display = 'none'); // Hide Delete buttons
+
+    // Capture the screenshot
+    html2canvas(document.getElementById('cart')).then(canvas => {
+        // Show the hidden elements again after screenshot
+        placeOrderButton.style.display = 'block';
+        deleteButtons.forEach(button => button.style.display = 'block');
+
+        // Convert the canvas to a data URL and open in a new tab or save it
+        const screenshotUrl = canvas.toDataURL("image/png");
+
+        // Create a download link for the image
+        const downloadLink = document.createElement('a');
+        downloadLink.href = screenshotUrl;
+        downloadLink.download = 'cart_screenshot.png'; // Filename for the screenshot
+        downloadLink.click();
+    }).catch(error => {
+        console.error("Error capturing screenshot:", error);
+    });
+}
     // Search functionality
     document.getElementById('searchBar').addEventListener('input', function() {
         const query = this.value.toLowerCase();
