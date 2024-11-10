@@ -6,7 +6,7 @@
     <title>Brothers Stationery</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-           body {
+        body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
@@ -156,11 +156,42 @@
         .delete-button:hover {
             background-color: #c82333;
         }
+
+        /* Cart Button Styles */
+        .cart-icon-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 32px;
+        }
+
+        .cart-icon {
+            font-size: 32px;
+            color: #333;
+            position: relative;
+        }
+
+        .cart-icon .badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 5px 8px;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
 
 <h1>Brothers Stationery</h1>
+
+<!-- Cart Icon Button -->
+<div class="cart-icon-container" onclick="scrollToCart()">
+    <span class="cart-icon">🛒<span class="badge" id="cartCount">0</span></span>
+</div>
 
 <!-- Search Bar -->
 <input type="text" id="searchBar" placeholder="Search for products...">
@@ -176,7 +207,9 @@
 </div>
 
 <script>
-   const items = [
+    const items = [
+        // Your items array here
+
             { id: "184760", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Envoy_Premium_Ballpen_Black_Ink_-Matador_Group-5b5ab-184760.jpg", title: "Matador Envoy Premium Ballpen Black Ink - (5 Pcs)", author: "Matador Group", mainPrice: 10, discountPrice: 7},
             { id: "184761", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_i_teen_Gel_pen_Black_Ink_06_Pcs-Matador_Group-bc25b-184761.jpg", title: "Matador i-teen Gel Pen 6Pcs - Black Ink", author: "Matador Group", mainPrice: 12, discountPrice: 8},
             { id: "184764", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Ocean_Gel_Blue_Ink_05_Pcs-Matador_Group-c7735-184764.jpg", title: "Matador Ocean Gel Pen Blue Ink - 5 Pcs", author: "Matador Group", mainPrice: 12, discountPrice: 8 },
@@ -195,7 +228,7 @@
             { id: "242696", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Ocean_Gel_Pen_Black_Ink_5_Pcs-Matador_Group-1b409-242696.png", title: "Matador Ocean Gel Pen Black Ink - 5 Pcs", author: "Matador Group", mainPrice: 12, discountPrice: 8},
             { id: "242691", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_i_teen_Gel_pen_Red_Black_Ink_06_-Matador_Group-661aa-242691.png", title: "Matador i-teen Gel Pen 6Pcs - Red Ink", author: "Matador Group", mainPrice: 15, discountPrice: 10 },
             { id: "242685", img: "https://img.cf.rokomari.com/ProductNew20190903/260X372/Matador_Orbit_Blue_12_Pcs-Matador_Group-0fd7c-242685.jpg", title: "Matador Orbit Ball Pen Blue Ink - 12 Pcs", author: "Matador Group", mainPrice: 5, discountPrice: 4}        
-        ];
+    ];
     const cart = [];
 
     // Display items
@@ -249,6 +282,12 @@
         const cartItem = { ...item, quantity: parseInt(quantity) };
         cart.push(cartItem);
         displayCart();
+        updateCartCount();
+    }
+
+    // Update cart count badge
+    function updateCartCount() {
+        document.getElementById('cartCount').innerText = cart.length;
     }
 
     // Display cart
@@ -272,49 +311,45 @@
     function deleteFromCart(index) {
         cart.splice(index, 1);
         displayCart();
+        updateCartCount();
+    }
+
+    // Scroll to cart section
+    function scrollToCart() {
+        document.getElementById('cart').scrollIntoView({ behavior: 'smooth' });
     }
 
     // Place order
     function placeOrder() {
-    if (cart.length === 0) {
-        alert("Your cart is empty!");
-        return;
+        if (cart.length === 0) {
+            alert("Your cart is empty!");
+            return;
+        }
+
+        const placeOrderButton = document.getElementById('placeOrder');
+        const deleteButtons = document.querySelectorAll('.delete-button');
+        
+        placeOrderButton.style.display = 'none';
+        deleteButtons.forEach(button => button.style.display = 'none');
+
+        html2canvas(document.getElementById('cart')).then(canvas => {
+            const imageData = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.href = imageData;
+            link.download = 'cart_order.png';
+            link.click();
+
+            cart.length = 0;
+            displayCart();
+            updateCartCount();
+            placeOrderButton.style.display = 'block';
+            deleteButtons.forEach(button => button.style.display = 'block');
+        });
     }
 
-    // Hide the "Place Order" button and "Delete" buttons
-    const placeOrderButton = document.getElementById('placeOrder');
-    const deleteButtons = document.querySelectorAll('.delete-button');
-    
-    placeOrderButton.style.display = 'none'; // Hide Place Order button
-    deleteButtons.forEach(button => button.style.display = 'none'); // Hide Delete buttons
-
-    // Capture the screenshot
-    html2canvas(document.getElementById('cart')).then(canvas => {
-        // Show the hidden elements again after screenshot
-        placeOrderButton.style.display = 'block';
-        deleteButtons.forEach(button => button.style.display = 'block');
-
-        // Convert the canvas to a data URL and open in a new tab or save it
-        const screenshotUrl = canvas.toDataURL("image/png");
-
-        // Create a download link for the image
-        const downloadLink = document.createElement('a');
-        downloadLink.href = screenshotUrl;
-        downloadLink.download = 'cart_screenshot.png'; // Filename for the screenshot
-        downloadLink.click();
-    }).catch(error => {
-        console.error("Error capturing screenshot:", error);
-    });
-}
-    // Search functionality
-    document.getElementById('searchBar').addEventListener('input', function() {
-        const query = this.value.toLowerCase();
-        const filteredItems = items.filter(item => item.title.toLowerCase().includes(query));
-        displayItems(filteredItems);
-    });
-
-    // Initial display of items
+    // Initial display
     displayItems(items);
+
 </script>
 
 </body>
