@@ -325,31 +325,43 @@ function displayItems(items) {
 
     // Place order
     function placeOrder() {
-        if (cart.length === 0) {
-            alert("Your cart is empty!");
-            return;
-        }
-
-        const placeOrderButton = document.getElementById('placeOrder');
-        const deleteButtons = document.querySelectorAll('.delete-button');
-        
-        placeOrderButton.style.display = 'none';
-        deleteButtons.forEach(button => button.style.display = 'none');
-
-        html2canvas(document.getElementById('cart')).then(canvas => {
-            const imageData = canvas.toDataURL('image/png');
-            const link = document.createElement('a');
-            link.href = imageData;
-            link.download = 'cart_order.png';
-            link.click();
-
-            cart.length = 0;
-            displayCart();
-            updateCartCount();
-            placeOrderButton.style.display = 'block';
-            deleteButtons.forEach(button => button.style.display = 'block');
-        });
+    if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
     }
+
+    const placeOrderButton = document.getElementById('placeOrder');
+    const deleteButtons = document.querySelectorAll('.delete-button');
+
+    placeOrderButton.style.display = 'none';
+    deleteButtons.forEach(button => button.style.display = 'none');
+
+    html2canvas(document.getElementById('cart')).then(canvas => {
+        const imageData = canvas.toDataURL('image/png');
+
+        // Create a WhatsApp message
+        const phoneNumber = "+8801531540211"; // Replace with your WhatsApp number
+        const message = encodeURIComponent("Hello, I would like to place an order. Please find the attached.");
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${message}`;
+
+        // Convert image to a downloadable file
+        const link = document.createElement('a');
+        link.href = imageData;
+        link.download = 'cart_order.png';
+        link.click();
+
+        // Redirect to WhatsApp
+        setTimeout(() => {
+            window.open(whatsappUrl, '_blank');
+        }, 1000); // Small delay to ensure the image is downloaded
+
+        cart.length = 0;
+        displayCart();
+        updateCartCount();
+        placeOrderButton.style.display = 'block';
+        deleteButtons.forEach(button => button.style.display = 'block');
+    });
+}
 
     // Initial display
     displayItems(items);
